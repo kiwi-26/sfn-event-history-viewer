@@ -80,8 +80,9 @@ const filteredEvents = computed(() => {
     </div>
 
     <h2 class="font-bold text-sky-800">Result</h2>
-    <div v-if="mapIterationIndexMax > 0">
-      <select v-model="filteredIterationIndex" class="px-4 py-2 border rounded-lg">
+    <div v-if="mapIterationIndexMax > 0" class="space-y-1">
+      <label for="filteredIterationIndex" class="block text-sm">Map iteration index</label>
+      <select id="filteredIterationIndex" v-model="filteredIterationIndex" class="px-4 py-2 border rounded-lg cursor-pointer">
         <option v-for="idx of [...Array(mapIterationIndexMax + 2)].map((_, i) => i - 1)" :key="idx" :value="idx">{{ idx ==
           -1 ? 'all' : idx }}</option>
       </select>
