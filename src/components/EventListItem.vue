@@ -99,24 +99,26 @@ const shouldExpand = (event: HistoryEventWithNext) => getEventDetail(event).leng
 </script>
 
 <template>
-  <label class="grid grid-cols-8 gap-2 border rounded-sm text-sm" :class="{'cursor-pointer hover:bg-gray-50': shouldExpand(event)}">
-    <p class="col-span-1 p-2">
-      <input type="checkbox" v-model="isExpanded" class="hidden" />
-      {{ event.id }}
-    </p>
-    <p class="col-span-2 p-2">{{ event.type }}</p>
-    <p class="col-span-4 p-2">{{ getEventName(event) }}</p>
-    <div class="col-span-1 p-2 flex justify-between items-center">
-      <span>{{ event.mapIterationIndex }}</span>
-      <svg v-if="shouldExpand(event) && !isExpanded" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-        <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-      </svg>
-      <svg v-if="shouldExpand(event) && isExpanded" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-      </svg>
-    </div>
-    <div class="col-span-8 p-2" v-if="isExpanded && shouldExpand(event)">
-      <table class="w-full bg-sky-50">
+  <div class="border rounded-sm text-sm">
+    <label class="grid grid-cols-8 gap-2" :class="{'cursor-pointer hover:bg-gray-50': shouldExpand(event)}">
+      <p class="col-span-1 p-2">
+        <input type="checkbox" v-model="isExpanded" class="hidden" />
+        {{ event.id }}
+      </p>
+      <p class="col-span-2 p-2">{{ event.type }}</p>
+      <p class="col-span-4 p-2">{{ getEventName(event) }}</p>
+      <div class="col-span-1 p-2 flex justify-between items-center">
+        <span>{{ event.mapIterationIndex }}</span>
+        <svg v-if="shouldExpand(event) && !isExpanded" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+        </svg>
+        <svg v-if="shouldExpand(event) && isExpanded" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+        </svg>
+      </div>
+    </label>
+    <div class="p-2" v-if="isExpanded && shouldExpand(event)">
+      <table class="w-full bg-sky-50 rounded-sm">
         <tr v-for="detail of getEventDetail(event)" :key="detail[0]">
           <th class="p-2 align-top text-left w-16">{{ detail[0] }}</th>
           <td class="p-2">
@@ -125,6 +127,6 @@ const shouldExpand = (event: HistoryEventWithNext) => getEventDetail(event).leng
         </tr>
       </table>
     </div>
-  </label>
+  </div>
 </template>
 
