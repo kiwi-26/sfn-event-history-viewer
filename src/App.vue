@@ -2,6 +2,7 @@
 import { computed, ref, Ref } from 'vue'
 import { HistoryEventWithNext } from './types.ts';
 import EventListItem from './components/EventListItem.vue';
+import { GetExecutionHistoryOutput } from '@aws-sdk/client-sfn';
 
 const input = ref('')
 const events: Ref<HistoryEventWithNext[]> = ref([])
@@ -10,50 +11,52 @@ const mapIterationIndexMax = ref(-1);
 const filteredIterationIndex = ref(-1);
 
 const loadInput = () => {
-  const json = JSON.parse(input.value) as HistoryEventWithNext[];
+  const json = JSON.parse(input.value) as GetExecutionHistoryOutput;
   const tmpEvents: HistoryEventWithNext[] = [];
   const tmpEventMap = new Map<number, HistoryEventWithNext>();
-  for (let i = 0; i < json.length; i++) {
-    const event = json[i];
-    event.historyIndex = i;
-    if (event.id) {
-      event.nextEventIds = [];
-      switch (event.type) {
-        case 'MapIterationStarted':
-          event.mapIterationIndex = event.mapIterationStartedEventDetails?.index;
-          break;
-        case 'MapIterationSucceeded':
-          event.mapIterationIndex = event.mapIterationSucceededEventDetails?.index;
-          break;
-        case 'MapIterationAborted':
-          event.mapIterationIndex = event.mapIterationAbortedEventDetails?.index;
-          break;
-        case 'MapIterationFailed':
-          event.mapIterationIndex = event.mapIterationFailedEventDetails?.index;
-          break;
-      }
-      if (event.mapIterationIndex == null) {
-        event.mapIterationIndex = -1
-      }
+  if (json.events) {
+    for (let i = 0; i < json.events.length; i++) {
+      const event = json.events[i] as HistoryEventWithNext;
+      event.historyIndex = i;
+      if (event.id) {
+        event.nextEventIds = [];
+        switch (event.type) {
+          case 'MapIterationStarted':
+            event.mapIterationIndex = event.mapIterationStartedEventDetails?.index;
+            break;
+          case 'MapIterationSucceeded':
+            event.mapIterationIndex = event.mapIterationSucceededEventDetails?.index;
+            break;
+          case 'MapIterationAborted':
+            event.mapIterationIndex = event.mapIterationAbortedEventDetails?.index;
+            break;
+          case 'MapIterationFailed':
+            event.mapIterationIndex = event.mapIterationFailedEventDetails?.index;
+            break;
+        }
+        if (event.mapIterationIndex == null) {
+          event.mapIterationIndex = -1
+        }
 
-      if (mapIterationIndexMax.value < event.mapIterationIndex) {
-        mapIterationIndexMax.value = event.mapIterationIndex
-      }
+        if (mapIterationIndexMax.value < event.mapIterationIndex) {
+          mapIterationIndexMax.value = event.mapIterationIndex
+        }
 
-      if (event.previousEventId) {
-        const previousEvent = tmpEventMap.get(event.previousEventId)
-        if (previousEvent) {
-          previousEvent.nextEventIds?.push(event.id)
-          if (event.mapIterationIndex == -1 && event.type !== 'MapStateFailed' && event.type !== 'MapStateSucceeded') {
-            if (event.mapIterationIndex !== previousEvent.mapIterationIndex) {
-              event.mapIterationIndex = previousEvent.mapIterationIndex
+        if (event.previousEventId) {
+          const previousEvent = tmpEventMap.get(event.previousEventId)
+          if (previousEvent) {
+            previousEvent.nextEventIds?.push(event.id)
+            if (event.mapIterationIndex == -1 && event.type !== 'MapStateFailed' && event.type !== 'MapStateSucceeded') {
+              if (event.mapIterationIndex !== previousEvent.mapIterationIndex) {
+                event.mapIterationIndex = previousEvent.mapIterationIndex
+              }
             }
           }
         }
+        tmpEventMap.set(event.id, event);
+        tmpEvents.push(event)
       }
-      tmpEventMap.set(event.id, event);
-      tmpEvents.push(event)
-    }
+    }    
   }
 
   events.value = tmpEvents;
@@ -75,7 +78,7 @@ const filteredEvents = computed(() => {
     <h1 class="text-xl font-bold text-sky-800">Step Functions execution history events viewer</h1>
     <h2 class="font-bold text-sky-800">Input events (JSON)</h2>
     <div class="space-y-2">
-      <textarea v-model="input" class="w-full border rounded-lg h-16 p-4" placeholder="[{…},{…},…]"></textarea>
+      <textarea v-model="input" class="w-full border rounded-lg h-16 p-4" placeholder="Put history json (GetExecutionHistoryOutput)"></textarea>
       <button type="button" class="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-lg shadow" @click="loadInput">Apply</button>
     </div>
 
