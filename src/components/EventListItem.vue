@@ -151,7 +151,7 @@ const shouldExpand = (event: HistoryEventWithNext) => getEventDetail(event).leng
       </p>
       <p class="col-span-5 p-2">{{ getEventName(event) }}</p>
       <div class="col-span-1 p-2 flex justify-between items-center">
-        <span>{{ event.mapIterationIndex }}</span>
+        <span :class="{'text-gray-300': (event.mapIterationIndex ?? -1) < 0}">{{ (event.mapIterationIndex ?? -1) < 0 ? '-' : event.mapIterationIndex }}</span>
         <ChevronDownIcon v-if="shouldExpand(event) && !isExpanded" class="w-4 h-4" />
         <ChevronUpIcon v-if="shouldExpand(event) && isExpanded" class="w-4 h-4" />
       </div>
