@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { HistoryEventWithNext } from '../types';
+import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/vue/24/solid'
+
 defineProps<{
   event: HistoryEventWithNext
 }>()
@@ -109,12 +111,8 @@ const shouldExpand = (event: HistoryEventWithNext) => getEventDetail(event).leng
       <p class="col-span-4 p-2">{{ getEventName(event) }}</p>
       <div class="col-span-1 p-2 flex justify-between items-center">
         <span>{{ event.mapIterationIndex }}</span>
-        <svg v-if="shouldExpand(event) && !isExpanded" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-          <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-        </svg>
-        <svg v-if="shouldExpand(event) && isExpanded" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-          <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-        </svg>
+        <ChevronDownIcon v-if="shouldExpand(event) && !isExpanded" class="w-4 h-4" />
+        <ChevronUpIcon v-if="shouldExpand(event) && isExpanded" class="w-4 h-4" />
       </div>
     </label>
     <div class="p-2" v-if="isExpanded && shouldExpand(event)">
