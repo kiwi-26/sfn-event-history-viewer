@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { VNode, h, ref } from 'vue';
 import { HistoryEventWithNext } from '../types';
-import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/vue/24/solid'
+import { ChevronUpIcon, ChevronDownIcon, EllipsisHorizontalCircleIcon, MinusCircleIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/vue/24/outline'
+import { HistoryEventType } from '@aws-sdk/client-sfn';
 
 defineProps<{
   event: HistoryEventWithNext
@@ -28,6 +29,40 @@ const getEventName = (event: HistoryEventWithNext) => {
     default:
       return null;
   }
+}
+
+const getEventIcon = (eventType: HistoryEventType | undefined): VNode => {
+  if (!eventType) {
+    return h(EllipsisHorizontalCircleIcon);
+  }
+
+  if (eventType.endsWith('Succeeded')) {
+    return h(CheckCircleIcon);
+  }
+  if (eventType.endsWith('Failed')) {
+    return h(XCircleIcon);
+  }
+  if (eventType.endsWith('Aborted')) {
+    return h(MinusCircleIcon);
+  }
+  return h(EllipsisHorizontalCircleIcon);
+}
+
+const getEventTypeClass = (eventType: HistoryEventType | undefined): any => {
+  if (!eventType) {
+    return { 'text-gray-500': true };
+  }
+
+  if (eventType.endsWith('Succeeded')) {
+    return { 'text-green-600': true };
+  }
+  if (eventType.endsWith('Failed')) {
+    return { 'text-red-500': true };
+  }
+  if (eventType.endsWith('Aborted')) {
+    return { 'text-gray-800': true };
+  }
+  return { 'text-gray-500': true };
 }
 
 const getEventDetail = (event: HistoryEventWithNext) => {
@@ -102,13 +137,19 @@ const shouldExpand = (event: HistoryEventWithNext) => getEventDetail(event).leng
 
 <template>
   <div class="border rounded-sm text-sm">
-    <label class="grid grid-cols-8 gap-2" :class="{'cursor-pointer hover:bg-gray-50': shouldExpand(event)}">
+    <label class="grid grid-cols-12 gap-1" :class="{'cursor-pointer hover:bg-gray-50': shouldExpand(event)}">
       <p class="col-span-1 p-2">
         <input type="checkbox" v-model="isExpanded" class="hidden" />
+        {{ event.historyIndex }}
+      </p>
+      <p class="col-span-1 p-2">
         {{ event.id }}
       </p>
-      <p class="col-span-2 p-2">{{ event.type }}</p>
-      <p class="col-span-4 p-2">{{ getEventName(event) }}</p>
+      <p class="col-span-4 p-2 flex items-center gap-1" :class="getEventTypeClass(event.type)">
+        <component :is="getEventIcon(event.type)" class="h-4 w-4"/>
+        {{ event.type }}
+      </p>
+      <p class="col-span-5 p-2">{{ getEventName(event) }}</p>
       <div class="col-span-1 p-2 flex justify-between items-center">
         <span>{{ event.mapIterationIndex }}</span>
         <ChevronDownIcon v-if="shouldExpand(event) && !isExpanded" class="w-4 h-4" />

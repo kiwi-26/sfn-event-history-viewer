@@ -92,10 +92,11 @@ const filteredEvents = computed(() => {
     </div>
     
     <div class="space-y-1 relative">
-      <div class="grid grid-cols-8 gap-2 sticky top-0 bg-white text-sm">
+      <div class="grid grid-cols-12 gap-2 sticky top-0 bg-white text-sm">
+        <p class="col-span-1 p-2 border-b">#</p>
         <p class="col-span-1 p-2 border-b">id</p>
-        <p class="col-span-2 p-2 border-b">type</p>
-        <p class="col-span-4 p-2 border-b">name</p>
+        <p class="col-span-4 p-2 border-b">type</p>
+        <p class="col-span-5 p-2 border-b">name</p>
         <p class="col-span-1 p-2 border-b">itr</p>
       </div>
       <event-list-item v-for="event of filteredEvents" :key="event.id" :event="event" />
