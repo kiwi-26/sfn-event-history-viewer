@@ -17,6 +17,7 @@ const loadInput = () => {
   if (json.events) {
     for (let i = 0; i < json.events.length; i++) {
       const event = json.events[i] as HistoryEventWithNext;
+      event.originalEventJson = JSON.stringify(event, null, 2);
       event.historyIndex = i;
       if (event.id) {
         event.nextEventIds = [];

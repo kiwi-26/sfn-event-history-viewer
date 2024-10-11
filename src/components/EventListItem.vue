@@ -132,7 +132,7 @@ const getEventDetail = (event: HistoryEventWithNext) => {
   }
 }
 
-const shouldExpand = (event: HistoryEventWithNext) => getEventDetail(event).length > 0
+const shouldExpand = (event: HistoryEventWithNext) => true
 </script>
 
 <template>
@@ -156,7 +156,8 @@ const shouldExpand = (event: HistoryEventWithNext) => getEventDetail(event).leng
         <ChevronUpIcon v-if="shouldExpand(event) && isExpanded" class="w-4 h-4" />
       </div>
     </label>
-    <div class="p-2" v-if="isExpanded && shouldExpand(event)">
+    <div class="p-2 space-y-2" v-if="isExpanded && shouldExpand(event)">
+      <pre class="w-full whitespace-pre-wrap">{{ event.originalEventJson }}</pre>
       <table class="w-full bg-sky-50 rounded-sm">
         <tr v-for="detail of getEventDetail(event)" :key="detail[0]">
           <th class="p-2 align-top text-left w-16">{{ detail[0] }}</th>
