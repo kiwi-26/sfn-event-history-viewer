@@ -132,7 +132,7 @@ const getEventDetail = (event: HistoryEventWithNext) => {
   }
 }
 
-const shouldExpand = (event: HistoryEventWithNext) => true
+const shouldExpand = (event: HistoryEventWithNext) => (event.originalEventJson?.length ?? 0) > 0
 </script>
 
 <template>
