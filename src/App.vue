@@ -17,6 +17,7 @@ const loadInput = () => {
   if (json.events) {
     for (let i = 0; i < json.events.length; i++) {
       const event = json.events[i] as HistoryEventWithNext;
+      event.originalEventJson = JSON.stringify(event, null, 2);
       event.historyIndex = i;
       if (event.id) {
         event.nextEventIds = [];
@@ -74,9 +75,9 @@ const filteredEvents = computed(() => {
 </script>
 
 <template>
-  <div class="container space-y-4 p-4 mx-auto">
+  <div class="container space-y-4 p-4 mx-auto text-gray-800">
     <h1 class="text-xl font-bold text-sky-800">Step Functions execution history events viewer</h1>
-    <h2 class="font-bold text-sky-800">Input events (JSON)</h2>
+    <h2 class="font-bold text-sky-800">Put GetExecutionHistoryOutput JSON</h2>
     <div class="space-y-2">
       <textarea v-model="input" class="w-full border rounded-lg h-16 p-4" placeholder="Put history json (GetExecutionHistoryOutput)"></textarea>
       <button type="button" class="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-lg shadow" @click="loadInput">Apply</button>
@@ -92,7 +93,7 @@ const filteredEvents = computed(() => {
     </div>
     
     <div class="space-y-1 relative">
-      <div class="grid grid-cols-12 gap-2 sticky top-0 bg-white text-sm">
+      <div class="grid grid-cols-12 gap-2 sticky top-0 bg-white text-sm text-sky-800">
         <p class="col-span-1 p-2 border-b">#</p>
         <p class="col-span-1 p-2 border-b">id</p>
         <p class="col-span-4 p-2 border-b">type</p>
@@ -100,11 +101,6 @@ const filteredEvents = computed(() => {
         <p class="col-span-1 p-2 border-b">itr</p>
       </div>
       <event-list-item v-for="event of filteredEvents" :key="event.id" :event="event" />
-    </div>
-    
-    <h2 class="font-bold text-sky-800">Input (indented)</h2>
-    <div class="border rounded-lg p-4">
-      <code class="text-xs"><pre style="white-space: pre-wrap;">{{ input.length > 0 ? JSON.parse(input) : '' }}</pre></code>
     </div>
   </div>
 </template>
